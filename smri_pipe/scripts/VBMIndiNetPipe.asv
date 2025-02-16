@@ -1,0 +1,22 @@
+function VBMIndiNetPipe(DataDir, T1Name, AllOpt, RunVBMIndiNetAfterVBM)
+[Path, Key, Ext]=fileparts(T1Name);
+if exist('RunVBMIndiNetAfterVBM', 'var')==0
+    RunVBMIndiNetAfterVBM=0;
+end
+%% Run Pipeline
+if ~RunVBMIndiNetAfterVBM % Perform VBM first
+    Opt=[];
+    Opt.DoReconSurf=0;
+    Opt.TPMPath=AllOpt.TPMPath;
+    Opt.RegMethod=AllOpt.RegMethod;
+    Opt.ShootingTPMPath=AllOpt.ShootingTPMPath;
+    Opt.DartelTPMPath=AllOpt.DartelTPMPath;
+    
+    w_RunCCSeg(DataDir, T1Name, Opt);
+end
+
+Opt=[];
+fprintf('Performing VBM Individual Network S')
+w_RunVBMIndiNetStepOne(DataDir, T1Name, Opt);
+w_RunVBMIndiNetStepTwoThree(DataDir, T1Name, Opt);
+w_RunVBMIndiNetStepFour(DataDir, T1Name, Opt);

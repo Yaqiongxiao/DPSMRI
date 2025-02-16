@@ -1,0 +1,24 @@
+% Standardise lerch values
+CN_a2=textread('/haso/users/bettytij//Betty/results/old_cohort_76subjects/native/result_dirs.txt','%s');
+
+numimages=size(CN_a2,1);
+
+for im=1:numimages
+
+	this_scan=char(CN_a2(im));
+
+	Va = spm_vol(strcat(this_scan, 'images/degree_lerch.img'));
+	Sa = spm_read_vols(Va);
+	Sa(Sa==0)=NaN;
+
+	Sa = (Sa-min(Sa(:)))./(max(Sa(:))-min(Sa(:)));
+
+	l1=Va;
+	l1.pinfo=[0,0,0]';
+	l1.fname=strcat(this_scan, 'images/stand_rot_lerch_all.nii');
+
+	%store data in image
+	spm_write_vol(l1, Sa);
+
+	im
+end

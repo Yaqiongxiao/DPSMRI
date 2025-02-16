@@ -1,0 +1,26 @@
+function CBPipe(DataDir, T1Name, AllOpt)
+[Path, Key, Ext]=fileparts(T1Name);
+
+%% Run Pipeline
+Opt=[];
+w_RunCBSeg(DataDir, T1Name, Opt);
+
+Opt=[];
+w_RunCBNorm(DataDir,...
+    {'cerebellum', sprintf('%s_seg1.nii', Key)}, {'cerebellum', sprintf('%s_seg2.nii', Key)},...
+    {'cerebellum', sprintf('c_%s_pcereb.nii', Key)}, Opt);
+
+Opt=[];
+w_RunCBReslice(DataDir,...
+    {'cerebellum', sprintf('%s.nii', Key)}, {'cerebellum', sprintf('Affine_%s_seg1.mat', Key)},...
+    {'cerebellum', sprintf('u_a_%s_seg1.nii', Key)}, {'cerebellum', sprintf('c_%s_pcereb.nii', Key)},...
+    Opt);
+
+Opt=[];
+Opt.CBAtlasPath=AllOpt.CBAtlasPath;
+%SUITPath=fileparts(which('spm_suit.m'));
+%Opt.AtlasPath=fullfile(SUITPath, 'cerebellar_atlases-1.0', 'Buckner_2011',...
+%    'atl-Buckner7_space-SUIT_dseg.nii');
+w_RunCBVolume(DataDir,...
+    {'cerebellum', sprintf('c_%s_pcereb.nii', Key)}, {'cerebellum', sprintf('Affine_%s_seg1.mat', Key)},...
+    {'cerebellum', sprintf('u_a_%s_seg1.nii', Key)}, Opt);
